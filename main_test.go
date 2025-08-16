@@ -510,7 +510,10 @@ func TestCasbinEnforcerSetup(t *testing.T) {
 
 	t.Run("Enforcer_RoleInheritance", func(t *testing.T) {
 		// Test that cathy has the dataset1_admin role
-		roles := e.GetRolesForUser("cathy")
+		roles, err := e.GetRolesForUser("cathy")
+		if err != nil {
+			t.Fatalf("GetRolesForUser failed: %v", err)
+		}
 		found := false
 		for _, role := range roles {
 			if role == "dataset1_admin" {
@@ -523,4 +526,5 @@ func TestCasbinEnforcerSetup(t *testing.T) {
 		}
 	})
 }
+
 
