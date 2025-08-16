@@ -14,13 +14,32 @@ import (
 
 // setupTestEnforcer creates a test Casbin enforcer with the existing model and policy files
 func setupTestEnforcer(t *testing.T) *casbin.Enforcer {
-	e, err := casbin.NewEnforcer("authz_model.conf", "authz_policy_test.csv")
+	e, err := casbin.NewEnforcer("authz_model.conf")
 	if err != nil {
 		t.Fatalf("Failed to create enforcer: %v", err)
 	}
 	
-	if err = e.LoadPolicy(); err != nil {
-		t.Fatalf("Failed to load policy: %v", err)
+	// Add policies programmatically to avoid file modification issues
+	policies := [][]string{
+		{"alice", "/api/v1/", "GET"},
+		{"alice", "/api/v1/data1", "POST"},
+		{"bob", "/api/v1/resource1", "*"},
+		{"bob", "/api/v1/resource2", "GET"},
+		{"bob", "/api/v1/*", "POST"},
+		{"dataset1_admin", "/dataset1/*", "*"},
+	}
+	
+	for _, policy := range policies {
+		_, err := e.AddPolicy(policy[0], policy[1], policy[2])
+		if err != nil {
+			t.Fatalf("Failed to add policy %v: %v", policy, err)
+		}
+	}
+	
+	// Add role inheritance
+	_, err = e.AddRoleForUser("cathy", "dataset1_admin")
+	if err != nil {
+		t.Fatalf("Failed to add role for cathy: %v", err)
 	}
 	
 	return e
@@ -534,6 +553,7 @@ func TestCasbinEnforcerSetup(t *testing.T) {
 		}
 	})
 }
+
 
 
 
