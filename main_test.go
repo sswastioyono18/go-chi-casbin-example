@@ -361,12 +361,20 @@ func TestHTTPEndpoints(t *testing.T) {
 
 // TestPolicyManagement tests the AddPolicy and SavePolicy functionality
 func TestPolicyManagement(t *testing.T) {
-	e := setupTestEnforcer(t)
+	// Create a separate enforcer for policy management tests to avoid interference
+	e, err := casbin.NewEnforcer("authz_model.conf", "authz_policy_test.csv")
+	if err != nil {
+		t.Fatalf("Failed to create enforcer: %v", err)
+	}
+	
+	if err = e.LoadPolicy(); err != nil {
+		t.Fatalf("Failed to load policy: %v", err)
+	}
 
 	// Test AddPolicy
 	t.Run("AddPolicy_Success", func(t *testing.T) {
-		// Add a new policy
-		added, err := e.AddPolicy("testuser", "/api/v1/test", "GET")
+		// Add a new policy that doesn't exist in the original policy file
+		added, err := e.AddPolicy("newuser", "/api/v1/newtest", "GET")
 		if err != nil {
 			t.Fatalf("AddPolicy failed: %v", err)
 		}
@@ -375,18 +383,18 @@ func TestPolicyManagement(t *testing.T) {
 		}
 
 		// Verify the policy was added
-		allowed, err := e.Enforce("testuser", "/api/v1/test", "GET")
+		allowed, err := e.Enforce("newuser", "/api/v1/newtest", "GET")
 		if err != nil {
 			t.Fatalf("Enforce failed: %v", err)
 		}
 		if !allowed {
-			t.Error("Expected testuser to have access after adding policy")
+			t.Error("Expected newuser to have access after adding policy")
 		}
 	})
 
 	t.Run("AddPolicy_Duplicate", func(t *testing.T) {
 		// Try to add the same policy again
-		added, err := e.AddPolicy("testuser", "/api/v1/test", "GET")
+		added, err := e.AddPolicy("newuser", "/api/v1/newtest", "GET")
 		if err != nil {
 			t.Fatalf("AddPolicy failed: %v", err)
 		}
@@ -526,6 +534,7 @@ func TestCasbinEnforcerSetup(t *testing.T) {
 		}
 	})
 }
+
 
 
 
