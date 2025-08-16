@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/casbin/casbin/v2"
-	authz "github.com/casbin/chi-authz"
 	"github.com/go-chi/chi"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -98,3 +97,4 @@ func main() {
 
 	http.ListenAndServe(":8081", router)
 }
+
