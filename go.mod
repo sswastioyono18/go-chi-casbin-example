@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/casbin/casbin/v2 v2.120.0
-	github.com/casbin/chi-authz v0.0.0-20170726155602-f9f57e3793f2
+	github.com/casbin/chi-authz v0.0.0-20240129155859-24af74905f10
 	github.com/go-chi/chi v1.5.5
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jmoiron/sqlx v1.3.5
