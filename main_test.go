@@ -473,7 +473,10 @@ func TestCasbinEnforcerSetup(t *testing.T) {
 
 	t.Run("Enforcer_LoadedPolicies", func(t *testing.T) {
 		// Test that policies are loaded by checking known permissions
-		policies := e.GetPolicy()
+		policies, err := e.GetPolicy()
+		if err != nil {
+			t.Fatalf("GetPolicy failed: %v", err)
+		}
 		if len(policies) == 0 {
 			t.Error("Expected policies to be loaded, but none found")
 		}
@@ -520,3 +523,4 @@ func TestCasbinEnforcerSetup(t *testing.T) {
 		}
 	})
 }
+
