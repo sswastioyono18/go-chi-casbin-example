@@ -1,6 +1,6 @@
 module github.com/kitabisa/casbin-example
 
-go 1.18
+go 1.24
 
 require (
 	github.com/Blank-Xu/sqlx-adapter v0.0.0-20210716082129-8f0d204a2a7d
@@ -16,3 +16,4 @@ require (
 )
 
 replace github.com/casbin/chi-authz => ../chi-authz
+
