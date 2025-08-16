@@ -10,6 +10,26 @@ import (
 	"net/http"
 )
 
+// Authorizer is a middleware that controls access to HTTP services using Casbin
+func Authorizer(e *casbin.Enforcer) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		fn := func(w http.ResponseWriter, r *http.Request) {
+			user, _, _ := r.BasicAuth()
+			method := r.Method
+			path := r.URL.Path
+			if ok, err := e.Enforce(user, path, method); err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			} else if !ok {
+				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+				return
+			}
+			next.ServeHTTP(w, r)
+		}
+		return http.HandlerFunc(fn)
+	}
+}
+
 func finalizer(db *sqlx.DB) {
 	err := db.Close()
 	if err != nil {
@@ -97,4 +117,5 @@ func main() {
 
 	http.ListenAndServe(":8081", router)
 }
+
 
