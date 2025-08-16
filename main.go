@@ -69,7 +69,7 @@ func main() {
 
 	router.Group(func(r chi.Router) {
 		r.Route("/api/v1", func(r chi.Router) {
-			r.Use(authz.Authorizer(e))
+			r.Use(Authorizer(e))
 			r.Get("/data1", func(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("bisa akses get endpoint data1"))
 			})
@@ -117,5 +117,6 @@ func main() {
 
 	http.ListenAndServe(":8081", router)
 }
+
 
 
