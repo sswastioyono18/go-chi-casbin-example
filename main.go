@@ -3,13 +3,32 @@ package main
 import (
 	"fmt"
 	"github.com/casbin/casbin/v2"
-	authz "github.com/casbin/chi-authz"
 	"github.com/go-chi/chi"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"log"
 	"net/http"
 )
+
+// Authorizer is a middleware that controls access to HTTP services using Casbin
+func Authorizer(e *casbin.Enforcer) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		fn := func(w http.ResponseWriter, r *http.Request) {
+			user, _, _ := r.BasicAuth()
+			method := r.Method
+			path := r.URL.Path
+			if ok, err := e.Enforce(user, path, method); err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			} else if !ok {
+				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+				return
+			}
+			next.ServeHTTP(w, r)
+		}
+		return http.HandlerFunc(fn)
+	}
+}
 
 func finalizer(db *sqlx.DB) {
 	err := db.Close()
@@ -50,7 +69,7 @@ func main() {
 
 	router.Group(func(r chi.Router) {
 		r.Route("/api/v1", func(r chi.Router) {
-			r.Use(authz.Authorizer(e))
+			r.Use(Authorizer(e))
 			r.Get("/data1", func(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("bisa akses get endpoint data1"))
 			})
@@ -98,3 +117,6 @@ func main() {
 
 	http.ListenAndServe(":8081", router)
 }
+
+
+

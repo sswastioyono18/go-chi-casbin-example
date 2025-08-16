@@ -5,5 +5,5 @@ p, bob, /api/v1/resource2, GET
 p, bob, /api/v1/*, POST
 p, dataset1_admin, /dataset1/*, *
 p, alice, /api/v1/data1, GET
-p, testuser, /api/v1/test, GET
+p, newuser, /api/v1/newtest, GET
 g, cathy, dataset1_admin
