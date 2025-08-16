@@ -14,7 +14,7 @@ import (
 
 // setupTestEnforcer creates a test Casbin enforcer with the existing model and policy files
 func setupTestEnforcer(t *testing.T) *casbin.Enforcer {
-	e, err := casbin.NewEnforcer("authz_model.conf", "authz_policy.csv")
+	e, err := casbin.NewEnforcer("authz_model.conf", "authz_policy_test.csv")
 	if err != nil {
 		t.Fatalf("Failed to create enforcer: %v", err)
 	}
@@ -526,5 +526,6 @@ func TestCasbinEnforcerSetup(t *testing.T) {
 		}
 	})
 }
+
 
 
