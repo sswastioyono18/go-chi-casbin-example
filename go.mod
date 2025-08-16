@@ -5,7 +5,7 @@ go 1.24
 require (
 	github.com/Blank-Xu/sqlx-adapter v0.0.0-20210716082129-8f0d204a2a7d
 	github.com/casbin/chi-authz v0.0.0-20170726155602-f9f57e3793f2
-	github.com/go-chi/chi v1.5.4
+	github.com/go-chi/chi v1.5.5
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jmoiron/sqlx v1.3.5
 )
@@ -16,4 +16,5 @@ require (
 )
 
 replace github.com/casbin/chi-authz => ../chi-authz
+
 
