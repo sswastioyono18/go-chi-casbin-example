@@ -15,7 +15,8 @@ require (
 	github.com/casbin/casbin/v2 v2.120.0 // indirect
 )
 
-replace github.com/casbin/chi-authz => ../chi-authz
+
+
 
 
 
